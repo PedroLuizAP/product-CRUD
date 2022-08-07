@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-/*
 app.MapGet("/", () => "Hello World!"); //Get Hello Word example
 
 app.MapGet("/user", () => new{ Name="Pedro Luiz", Age=22}); //Get Json return example
@@ -26,7 +25,7 @@ app.MapGet("/getproductbyheader", (HttpRequest request) => { // get by request e
     return request.Headers["product-code"];
 });
 
-*/
+
 
 app.Run();
 
