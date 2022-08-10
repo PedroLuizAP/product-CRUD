@@ -13,9 +13,9 @@ app.MapPost("/saveproduct", (Product product) => {  //post example
     return product.Id;
 });
 
-app.MapGet("/GetAllProduct", (Product product) => {  //return object example
-    return product;
-});
+//app.MapGet("/GetAllProduct", (Product product) => {  //return object example
+  //  return product;
+//});
 
 app.MapGet("/getproduct", ([FromQuery]string dateStart, [FromQuery]string dateEnd) => {  //get from query example
     return $"{dateStart}-{dateEnd}";
