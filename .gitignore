@@ -4,3 +4,10 @@
 
 /.vs
 /obj
+bin/Debug/net6.0/api.deps.json
+bin/Debug/net6.0/api.dll
+bin/Debug/net6.0/api.exe
+bin/Debug/net6.0/api.pdb
+bin/Debug/net6.0/api.runtimeconfig.json
+bin/Debug/net6.0/appsettings.Development.json
+bin/Debug/net6.0/appsettings.json

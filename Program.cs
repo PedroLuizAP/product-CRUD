@@ -2,42 +2,25 @@ using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
-/*
-app.MapGet("/", () => "Hello World!"); //Get Hello Word example
 
-app.MapGet("/user", () => new { Name = "Pedro Luiz", Age = 22 }); //Get Json return example
-
-app.MapGet("/userHeader", (HttpResponse response) => response.Headers.Add("Name", "Pedro Luiz")); //Get Response Example
-
-
-//app.MapGet("/GetAllProduct", (Product product) => {  //return object example
-//  return product;
-//});
-
-app.MapGet("/getproduct", ([FromQuery] string dateStart, [FromQuery] string dateEnd) =>
-{  //get from query example
-    return $"{dateStart}-{dateEnd}";
-});
-
-app.MapGet("/getproductbyheader", (HttpRequest request) =>
-{ // get by request example
-    return request.Headers["product-code"];
-});
-*/
-
-app.MapGet("/getproduct/{id}", ([FromRoute] string id) =>
-{ //get by route example
+app.MapGet("/product/{id}", ([FromRoute] string id) =>
+{ 
     var product = ProductRepository.GetById(id);
-    return product;
+
+    if(product == null) return Results.NotFound();
+
+
+    return Results.Ok(product);
 });
 
-
-app.MapPost("/saveproduct", (Product product) =>
-{  //post example
+app.MapPost("/product", (Product product) =>
+{  
     ProductRepository.Add(product);
+
+    return Results.Created($"/product/{product.Id}", product.Id);
 });
 
-app.MapPut("/updateproduct", (Product product) =>
+app.MapPut("/product", (Product product) =>
 {
     var productSave = ProductRepository.GetById(product.Id);
 
@@ -45,8 +28,8 @@ app.MapPut("/updateproduct", (Product product) =>
         productSave.Name = product.Name;
 });
 
-app.MapDelete("/deleteproduct/{id}", ([FromRoute] string id) =>
-{ //get by route example
+app.MapDelete("/product/{id}", ([FromRoute] string id) =>
+{
     var product = ProductRepository.GetById(id);
 
     if (product != null)
