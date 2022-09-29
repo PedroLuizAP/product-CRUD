@@ -4,13 +4,17 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 var configuration = app.Configuration;
-ProductRepository.Init(configuration);
 
+if (app.Environment.IsDevelopment())
+    ProductRepository.Init(configuration);
+else
+    ProductRepository.Products = new();
+    
 app.MapGet("/product/{id}", ([FromRoute] string id) =>
 {
     var product = ProductRepository.GetById(id);
 
-    if(product == null) return Results.NotFound();
+    if (product == null) return Results.NotFound();
 
     return Results.Ok(product);
 });
