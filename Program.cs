@@ -7,7 +7,7 @@ var configuration = app.Configuration;
 ProductRepository.Init(configuration);
 
 app.MapGet("/product/{id}", ([FromRoute] string id) =>
-{ 
+{
     var product = ProductRepository.GetById(id);
 
     if(product == null) return Results.NotFound();
@@ -16,7 +16,7 @@ app.MapGet("/product/{id}", ([FromRoute] string id) =>
 });
 
 app.MapPost("/product", (Product product) =>
-{  
+{
     ProductRepository.Add(product);
 
     return Results.Created($"/product/{product.Id}", product.Id);
@@ -26,16 +26,22 @@ app.MapPut("/product", (Product product) =>
 {
     var productSave = ProductRepository.GetById(product.Id);
 
-    if (productSave != null)
-        productSave.Name = product.Name;
+    if (productSave == null) return Results.NotFound();
+
+    productSave.Name = product.Name;
+
+    return Results.Ok();
 });
 
 app.MapDelete("/product/{id}", ([FromRoute] string id) =>
 {
     var product = ProductRepository.GetById(id);
 
-    if (product != null)
-        ProductRepository.Delete(product);
+    if (product == null) return Results.NotFound();
+
+    ProductRepository.Delete(product);
+
+    return Results.Ok();
 });
 
 app.MapGet("configuration/application", (IConfiguration configuration) =>
