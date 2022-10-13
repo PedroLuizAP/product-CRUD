@@ -3,6 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
+var configuration = app.Configuration;
+
+if (app.Environment.IsDevelopment())
+    ProductRepository.Init(configuration);
+else
+    ProductRepository.Products = new();
+    
 app.MapGet("/product/{id}", ([FromRoute] string id) =>
 {
     var product = ProductRepository.GetById(id);
@@ -41,18 +48,26 @@ app.MapDelete("/product/{id}", ([FromRoute] string id) =>
     return Results.Ok();
 });
 
+app.MapGet("configuration/application", (IConfiguration configuration) =>
+{
+    return Results.Ok(configuration["Application"]);
+});
+
 app.Run();
 
 public static class ProductRepository
 {
+    public static void Init(IConfiguration configuration)
+    {
+        var mockProducts = configuration.GetSection("MockProducts").Get<List<Product>>();
+
+        Products = mockProducts;
+    }
     public static List<Product>? Products { get; set; }
 
     public static void Add(Product product)
     {
-        if (Products == null)
-            Products = new();
-
-        Products.Add(product);
+        Products?.Add(product);
     }
 
     public static Product? GetById(string id)
@@ -62,7 +77,7 @@ public static class ProductRepository
 
     public static void Delete(Product product)
     {
-        Products.Remove(product);
+        Products?.Remove(product);
     }
 }
 
