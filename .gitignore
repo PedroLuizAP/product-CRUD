@@ -11,3 +11,4 @@ bin/Debug/net6.0/api.pdb
 bin/Debug/net6.0/api.runtimeconfig.json
 bin/Debug/net6.0/appsettings.Development.json
 bin/Debug/net6.0/appsettings.json
+/appsettings.Development.Ignore.json
