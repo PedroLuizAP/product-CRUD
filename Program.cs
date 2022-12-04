@@ -16,7 +16,7 @@ if (app.Environment.IsDevelopment())
 else
     ProductRepository.Products = new();
     
-app.MapGet("/product/{id}", ([FromRoute] string id) =>
+app.MapGet("/product/{id}", ([FromRoute] long id) =>
 {
     var product = ProductRepository.GetById(id);
 
@@ -43,7 +43,7 @@ app.MapPut("/product", (Product product) =>
     return Results.Ok();
 });
 
-app.MapDelete("/product/{id}", ([FromRoute] string id) =>
+app.MapDelete("/product/{id}", ([FromRoute] long id) =>
 {
     var product = ProductRepository.GetById(id);
 
@@ -76,7 +76,7 @@ public static class ProductRepository
         Products?.Add(product);
     }
 
-    public static Product? GetById(string id)
+    public static Product? GetById(long id)
     {
         return Products?.FirstOrDefault(product => product.Id == id);
     }
