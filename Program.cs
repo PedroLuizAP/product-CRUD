@@ -1,7 +1,6 @@
 using api.Data;
 using api.Dto;
 using api.Model;
-using api.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,11 +11,6 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(build
 var app = builder.Build();
 
 var configuration = app.Configuration;
-
-if (app.Environment.IsDevelopment())
-    ProductRepository.Init(configuration);
-else
-    ProductRepository.Products = new();
 
 app.MapGet("/product/{id}", ([FromRoute] long id, DataContext context) =>
 {
@@ -68,7 +62,7 @@ app.MapPut("/product/{id}", ([FromRoute] long id, ProductDto productDto, DataCon
 
 app.MapDelete("/product/{id}", ([FromRoute] long id, DataContext context) =>
 {
-    var product = ProductRepository.GetById(id);
+    var product = context.Products.FirstOrDefault(p => p.Id == id);
 
     if (product == null) return Results.NotFound();
 
