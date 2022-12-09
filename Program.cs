@@ -1,5 +1,7 @@
 using api.Data;
+using api.Dto;
 using api.Model;
+using api.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,75 +17,66 @@ if (app.Environment.IsDevelopment())
     ProductRepository.Init(configuration);
 else
     ProductRepository.Products = new();
-    
-app.MapGet("/product/{id}", ([FromRoute] long id) =>
+
+app.MapGet("/product/{id}", ([FromRoute] long id, DataContext context) =>
 {
-    var product = ProductRepository.GetById(id);
+    var product = context.Products.Include(p => p.Category).FirstOrDefault(p => p.Id == id);
 
     if (product == null) return Results.NotFound();
 
     return Results.Ok(product);
 });
 
-app.MapPost("/product", (Product product) =>
+app.MapPost("/product", (ProductDto productDto, DataContext context) =>
 {
-    ProductRepository.Add(product);
+    var category = context.Category.First(c => c.Id == productDto.CategoryId);
+
+    var product = new Product()
+    {
+        Name = productDto.Name,
+        Category = category,
+        Description = productDto.Description,
+        Code = productDto.Code
+    };
+
+    context.Products.Add(product);
+
+    context.SaveChanges();
 
     return Results.Created($"/product/{product.Id}", product.Id);
 });
 
-app.MapPut("/product", (Product product) =>
+app.MapPut("/product/{id}", ([FromRoute] long id, ProductDto productDto, DataContext context) =>
 {
-    var productSave = ProductRepository.GetById(product.Id);
+    var productSave = context.Products.FirstOrDefault(p => p.Id == id);
 
     if (productSave == null) return Results.NotFound();
 
-    productSave.Name = product.Name;
+    var category = context.Category.First(c => c.Id == productDto.CategoryId);
+
+    productSave.Name = productDto.Name;
+    productSave.Category = category;
+    productSave.Description = productDto.Description;
+    productSave.Code = productDto.Code;
+
+    context.Products.Update(productSave);
+
+    context.SaveChanges();
 
     return Results.Ok();
 });
 
-app.MapDelete("/product/{id}", ([FromRoute] long id) =>
+app.MapDelete("/product/{id}", ([FromRoute] long id, DataContext context) =>
 {
     var product = ProductRepository.GetById(id);
 
     if (product == null) return Results.NotFound();
 
-    ProductRepository.Delete(product);
+    context.Products.Remove(product);
+
+    context.SaveChanges();
 
     return Results.Ok();
 });
 
-app.MapGet("configuration/application", (IConfiguration configuration) =>
-{
-    return Results.Ok(configuration["Application"]);
-});
-
 app.Run();
-
-public static class ProductRepository
-{
-    public static void Init(IConfiguration configuration)
-    {
-        var mockProducts = configuration.GetSection("MockProducts").Get<List<Product>>();
-
-        Products = mockProducts;
-    }
-    public static List<Product>? Products { get; set; }
-
-    public static void Add(Product product)
-    {
-        Products?.Add(product);
-    }
-
-    public static Product? GetById(long id)
-    {
-        return Products?.FirstOrDefault(product => product.Id == id);
-    }
-
-    public static void Delete(Product product)
-    {
-        Products?.Remove(product);
-    }
-}
-
