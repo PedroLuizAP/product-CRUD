@@ -25,13 +25,7 @@ app.MapPost("/product", (ProductDto productDto, DataContext context) =>
 {
     var category = context.Category.First(c => c.Id == productDto.CategoryId);
 
-    var product = new Product()
-    {
-        Name = productDto.Name,
-        Category = category,
-        Description = productDto.Description,
-        Code = productDto.Code
-    };
+    var product = new Product(productDto.Name, category, productDto.Description, productDto.Code);
 
     context.Products.Add(product);
 
