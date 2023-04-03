@@ -5,8 +5,6 @@ namespace api.Data
 {
     public class DataContext : DbContext
     {
-        //protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlServer("");
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Product>().Property(p => p.Description).HasMaxLength(500).IsRequired(false);
