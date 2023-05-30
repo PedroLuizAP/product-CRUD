@@ -12,7 +12,7 @@ var app = builder.Build();
 
 var configuration = app.Configuration;
 
-app.MapGet("/product/{id}", ([FromRoute] long id, DataContext context) =>
+app.MapGet("/products/{id}", ([FromRoute] long id, DataContext context) =>
 {
     var product = context.Products.Include(p => p.Category).FirstOrDefault(p => p.Id == id);
 
@@ -21,7 +21,7 @@ app.MapGet("/product/{id}", ([FromRoute] long id, DataContext context) =>
     return Results.Ok(product);
 });
 
-app.MapPost("/product", (ProductDto productDto, DataContext context) =>
+app.MapPost("/products", (ProductDto productDto, DataContext context) =>
 {
     var category = context.Category.First(c => c.Id == productDto.CategoryId);
 
@@ -34,7 +34,7 @@ app.MapPost("/product", (ProductDto productDto, DataContext context) =>
     return Results.Created($"/product/{product.Id}", product.Id);
 });
 
-app.MapPut("/product/{id}", ([FromRoute] long id, ProductDto productDto, DataContext context) =>
+app.MapPut("/products/{id}", ([FromRoute] long id, ProductDto productDto, DataContext context) =>
 {
     var productSave = context.Products.FirstOrDefault(p => p.Id == id);
 
@@ -54,7 +54,7 @@ app.MapPut("/product/{id}", ([FromRoute] long id, ProductDto productDto, DataCon
     return Results.Ok();
 });
 
-app.MapDelete("/product/{id}", ([FromRoute] long id, DataContext context) =>
+app.MapDelete("/products/{id}", ([FromRoute] long id, DataContext context) =>
 {
     var product = context.Products.FirstOrDefault(p => p.Id == id);
 
